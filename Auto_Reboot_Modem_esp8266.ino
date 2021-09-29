@@ -5,8 +5,8 @@
 //char ssid[] = SECRET_SSID;        // your network SSID (name)
 //char password[] = SECRET_PASS;    // your network password (use for WPA, or use as key for WEP)
 
-const char* ssid = "Halehouse WiFi";          // Your ssid
-const char* password = "t4yl0rm1l43ll4";  // Your Password
+const char* ssid = "WiFiSSIDHere";          // Your ssid
+const char* password = "WiFiPasswordHere";  // Your Password
 const char* testHostname = "www.google.com";
 IPAddress HostIP;
 unsigned int localPort = 80;
