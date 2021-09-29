@@ -1,13 +1,15 @@
 #include <ESP8266WiFi.h>
+#include <ESP8266Ping.h>
 
 //#include <arduino_secrets.h>
 ///////please enter your sensitive data in the Secret tab/arduino_secrets.h
 //char ssid[] = SECRET_SSID;        // your network SSID (name)
 //char password[] = SECRET_PASS;    // your network password (use for WPA, or use as key for WEP)
 
-const char* ssid = "WiFiSSIDHere";          // Your ssid
-const char* password = "WiFiPasswordHere";  // Your Password
-const char* testHostname = "www.google.com";
+const char* ssid = "wifiSSIDHere";          // Your ssid
+const char* password = "wifiPasswordHere";  // Your Password
+const char* testHostname = "google.com";
+int pingResult;
 IPAddress HostIP;
 unsigned int localPort = 80;
 const int RELAY_Pin = 0;  //Relay Pin
@@ -17,7 +19,7 @@ int res;
 #define SECONDS 1000
 const unsigned long PROBE_DELAY = 10 * SECONDS;
 const unsigned long RESET_DELAY = 5 * MINUTES;
-const unsigned long RESET_PULSE = 10 * SECONDS;
+const unsigned long RESET_PULSE = 20 * SECONDS;
 int Nreset_events = 0;
 int i = 0;
 
@@ -28,7 +30,6 @@ enum {
 };
 
 int CurrentState = TESTING_STATE;
-
 
 void setup() {
   pinMode(RELAY_Pin, OUTPUT);
@@ -49,6 +50,9 @@ void setup() {
     delay(500);
   }
   Serial.println("\nWiFi connected");
+
+  Serial.println("Delay to give modem time to startup.");
+  delay(RESET_DELAY);
 }
 
 void reset_device() {
@@ -63,9 +67,11 @@ void reset_device() {
 void loop() {
   switch (CurrentState) {
 
-    case TESTING_STATE:    
-      res = WiFi.hostByName(testHostname, HostIP); //dns - test if able to resolve ip for testHostname
-      if ((res != 1) || (HostIP == IPAddress(255, 255, 255, 255))) {
+    case TESTING_STATE: 
+      Serial.println("Begining Test");
+      res = Ping.ping(testHostname);
+      if (!res) {  
+        Serial.println("failed test");
         CurrentState = FAILURE_STATE;
       } else {
         CurrentState = SUCCESS_STATE;
@@ -74,10 +80,14 @@ void loop() {
 
     case FAILURE_STATE:
       ++i;
+      Serial.print("Number of failed tries: ");
+      Serial.println(i);
       if (i > 4){
+        Serial.println("Begining Reset");
         reset_device();
         delay(RESET_DELAY);
         CurrentState = TESTING_STATE;
+        i = 0;
         break;
       } else {
         delay(PROBE_DELAY);
@@ -85,9 +95,11 @@ void loop() {
       }
       break;      
       
-
     case SUCCESS_STATE:
+      Serial.println("Successful Test");  
+      Serial.println();    
       delay(PROBE_DELAY);
+      i = 0;
       CurrentState = TESTING_STATE;
       break;
   }
