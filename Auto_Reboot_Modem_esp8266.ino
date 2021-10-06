@@ -1,13 +1,11 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266Ping.h>
 
-//#include <arduino_secrets.h>
+#include "arduino_secrets.h"
 ///////please enter your sensitive data in the Secret tab/arduino_secrets.h
-//char ssid[] = SECRET_SSID;        // your network SSID (name)
-//char password[] = SECRET_PASS;    // your network password (use for WPA, or use as key for WEP)
 
-const char* ssid = "wifiSSIDHere";          // Your ssid
-const char* password = "wifiPasswordHere";  // Your Password
+const char* ssid = SECRET_SSID;          // Your ssid
+const char* password = SECRET_PASS;  // Your Password
 const char* testHostname = "google.com";
 int pingResult;
 IPAddress HostIP;
