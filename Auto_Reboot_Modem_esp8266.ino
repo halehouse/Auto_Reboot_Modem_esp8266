@@ -19,7 +19,7 @@ int res;
 #define SECONDS 1000
 const unsigned long PROBE_DELAY = 10 * SECONDS;
 const unsigned long RESET_DELAY = 5 * MINUTES;
-const unsigned long RESET_PULSE = 20 * SECONDS;
+const unsigned long RESET_PULSE = 10 * SECONDS;
 int Nreset_events = 0;
 int i = 0;
 
@@ -79,10 +79,10 @@ void loop() {
       break;
 
     case FAILURE_STATE:
-      ++i;
+      i = (i+5); //off setting the cool down percentage
       Serial.print("Number of failed tries: ");
       Serial.println(i);
-      if (i > 4){
+      if (i > 20){
         Serial.println("Begining Reset");
         reset_device();
         delay(RESET_DELAY);
@@ -99,7 +99,10 @@ void loop() {
       Serial.println("Successful Test");  
       Serial.println();    
       delay(PROBE_DELAY);
-      i = 0;
+      if (i > 0) { //cool down; This should help with high packet loss.
+        --i; 
+      }       
+      Serial.println(i);
       CurrentState = TESTING_STATE;
       break;
   }
