@@ -2,10 +2,10 @@
 #include <ESP8266Ping.h>
 
 #include "arduino_secrets.h"
-///////please enter your sensitive data in the Secret tab/arduino_secrets.h
+///////please enter your sensitive data in the arduino_secrets.h
 
-const char* ssid = SECRET_SSID;          // Your ssid
-const char* password = SECRET_PASS;  // Your Password
+const char* ssid = SECRET_SSID;          // Your ssid from arduino_secrets.h 
+const char* password = SECRET_PASS;  // Your Password from arduino_secrets.h 
 const char* testHostname = "google.com";
 int pingResult;
 IPAddress HostIP;
